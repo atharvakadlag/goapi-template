@@ -1,12 +1,18 @@
 package utils
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"github.com/atharvakadlag/splitfree/types"
 	"github.com/go-playground/validator/v10"
 )
+
+type ContextKey string
+
+const UserKey ContextKey = "user"
 
 var Validate = validator.New()
 
@@ -27,4 +33,14 @@ func WriteJson(w http.ResponseWriter, status int, v any) error {
 
 func WriteError(w http.ResponseWriter, status int, err error) {
 	WriteJson(w, status, map[string]string{"error": err.Error()})
+}
+
+func GetUserFromContext(ctx context.Context) types.User {
+	user := ctx.Value(UserKey)
+
+	if user == nil {
+		return types.User{}
+	}
+
+	return user.(types.User)
 }
